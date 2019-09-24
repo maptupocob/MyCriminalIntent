@@ -44,7 +44,7 @@ public class CrimeListFragment extends Fragment {
         private TextView dateTextView;
         private ImageView solvedImageView;
         private Crime crime;
-        SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("EEEE, MMM dd, yyyy", Locale.ROOT);
+//        SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("EEEE, MMM dd, yyyy", Locale.ROOT);
 
         public CrimeHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_item_crime, parent, false));
@@ -63,7 +63,7 @@ public class CrimeListFragment extends Fragment {
 
             this.crime = crime;
             titleTextView.setText(this.crime.getName());
-            dateTextView.setText(mSimpleDateFormat.format(this.crime.getDate()));
+            dateTextView.setText(this.crime.getDate().toString());
             solvedImageView.setVisibility(crime.isSolved()?View.VISIBLE:View.INVISIBLE);
         }
 
