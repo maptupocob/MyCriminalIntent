@@ -1,5 +1,6 @@
 package com.martirosov.sergey.mycriminalintent;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class CrimeListFragment extends Fragment {
+    public static final int REQUEST_CRIME = 1;
     private CrimeAdapter crimeAdapter;
     private RecyclerView crimeRecyclerView;
 
@@ -34,12 +36,16 @@ public class CrimeListFragment extends Fragment {
     private void updateUI() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
+        if (crimeAdapter == null) {
+            crimeAdapter = new CrimeAdapter(crimes);
+            crimeRecyclerView.setAdapter(crimeAdapter);
+        } else {
+            crimeAdapter.notifyDataSetChanged();
+        }
 
-        crimeAdapter = new CrimeAdapter(crimes);
-        crimeRecyclerView.setAdapter(crimeAdapter);
     }
 
-    private class CrimeHolder extends RecyclerView.ViewHolder{
+    private class CrimeHolder extends RecyclerView.ViewHolder {
         private TextView titleTextView;
         private TextView dateTextView;
         private ImageView solvedImageView;
@@ -54,23 +60,24 @@ public class CrimeListFragment extends Fragment {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), crime.getName() + " clicked!!!", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(), crime.getName() + " clicked!!!", Toast.LENGTH_SHORT).show();
+                    startActivityForResult(CrimeActivity.newIntent(getActivity(), crime.getId()), REQUEST_CRIME);
                 }
             });
         }
 
-        public void bind(Crime crime){
+        public void bind(Crime crime) {
 
             this.crime = crime;
             titleTextView.setText(this.crime.getName());
             dateTextView.setText(this.crime.getDate().toString());
-            solvedImageView.setVisibility(crime.isSolved()?View.VISIBLE:View.INVISIBLE);
+            solvedImageView.setVisibility(crime.isSolved() ? View.VISIBLE : View.INVISIBLE);
         }
 
 
     }
 
-    private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder>{
+    private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> {
         private List<Crime> crimes;
 
         public CrimeAdapter(List<Crime> crimes) {
@@ -92,6 +99,20 @@ public class CrimeListFragment extends Fragment {
         @Override
         public int getItemCount() {
             return crimes.size();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CRIME){
+
         }
     }
 }
